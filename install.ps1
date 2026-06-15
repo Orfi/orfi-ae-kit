@@ -56,7 +56,7 @@ function Warn($msg) { Write-Warning $msg }
 function Die($msg)  { Write-Error "error: $msg"; exit 1 }
 
 function Show-Usage {
-    Get-Content $MyInvocation.PSCommandPath | Select-Object -Skip 2 -First 21 |
+    Get-Content $MyInvocation.PSCommandPath | Select-Object -Skip 2 -First 22 |
         ForEach-Object { $_ -replace '^#$','' -replace '^# ','' }
     exit 0
 }
