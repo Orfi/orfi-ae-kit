@@ -1,4 +1,16 @@
+```
+       ┌──────────────┐ task ──▶  ┌──────────────┐
+       │  ARCHITECT   │  (relay)  │  EXECUTOR    │
+       │  directs     │ ◀─ result │  implements  │
+       │  verifies    │  (relay)  │  tests       │
+       └──────┬───────┘           └──────────────┘
+              │
+           ( YOU ) ◀── human at the decision points
+```
+
 # orfi-ae-kit
+
+**Two sessions, one loop — you hold the pen.**
 
 **orfi-ae-kit** packages the **Architect/Executor** two-session AI development pattern as a set of slash-command skills. It is the **optional companion** to the generic [orfi-kit](#prerequisite--orfi-kit). The pattern was originally explored as a standalone desktop app codenamed *SonOfAnton* — that app was **shelved**. orfi-ae-kit is **skills-only: there is no app**, no daemon, no background process. Everything is commands you invoke inside your AI CLI.
 
