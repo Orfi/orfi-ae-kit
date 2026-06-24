@@ -27,7 +27,7 @@ Write the task so the executor needs no other context: state the goal, the speci
 <verifiable completion criteria>
 ```
 
-After writing the task, also update the **RELAY FILE STATE** section of `<kit-root>\CLAUDE-SESSION-STATE.md` so the next session can tell this task is the current/queued one (the relay files have no timestamp — the state note is the freshness authority). One line is enough, e.g. "`relay-to-executor.md` = <task> (CURRENT — queued <date>)".
+After writing the task, also update the **RELAY FILE STATE** section of `<kit-root>\COPILOT-SESSION-STATE.md` so the next session can tell this task is the current/queued one (the relay files have no timestamp — the state note is the freshness authority). One line is enough, e.g. "`relay-to-executor.md` = <task> (CURRENT — queued <date>)".
 
 After writing, confirm in one line: the file path written and a one-sentence summary of the task. Do not start doing the task yourself — you are only relaying it.
 

@@ -111,10 +111,9 @@ The relay, orientation, onboarding, and session-state files all live under a sin
 
 ```
 .orfi-kits/helper-files-root   one line: the absolute path to your helper-files root
-.orfi-kits/.gitignore          a single "*" so the whole folder stays untracked
 ```
 
-`.orfi-kits/` is kept **untracked** by its own self-contained `.gitignore` — no edits to your repo's root `.gitignore`, no noise for people who don't use the kit. Any command that needs the root reads the pointer first; if it isn't set yet, the command configures it on the spot, then continues. There is **no fallback** to any previous default path.
+`.orfi-kits/` is **tracked** (committed) on working branches, so the pointer propagates worktree → epic → child worktrees via the branch checkout. It is stripped from the final tree before the epic's PR merge by `/orfi-kit-cleanup-state`. Any command that needs the root reads the pointer first; if it isn't set yet, the command configures it on the spot, then continues. There is **no fallback** to any previous default path.
 
 **Then bootstrap the kit files** — run `/orfi-ae-kit-init` once per repo. It creates the orientation, onboarding, and session-state files under the root **only if they don't already exist** (it never overwrites; if the repo is already initialized it says so and quits). The orientation files it writes are **generic/agnostic** — all project-specific rules (stack, conventions, ADR location, test commands, security gate, terminology) live in `ONBOARDING.md`, which the orientation files redirect agents to read.
 
