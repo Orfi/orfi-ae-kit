@@ -3,9 +3,9 @@ name: orfi-ae-kit-relay-read-result
 description: Architect role — read the result the executor left in the architect relay file.
 ---
 
-You are acting as the **Architect**. Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, configure it now via `/orfi-ae-kit-set-helper-files-root` (ask the user for the path, write the pointer), then continue. There is no default path — do not fall back to any hard-coded location.
+You are acting as the **Architect**. Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, configure it now via `/orfi-ae-kit-set-helper-files-root` (ask the user for the path, write the pointer), then continue. There is no default path — do not fall back to any hard-coded location. Define `<kit-root>` = `<helper-files-root>\orfi-kits`.
 
-Read the file `<helper-files-root>\relay\relay-to-architect.md` in full — this is the result the executor Copilot reported back.
+Read the file `<kit-root>\relay\relay-to-architect.md` in full — this is the result the executor Copilot reported back.
 
 If the file is empty or missing, say so and stop (no result yet).
 

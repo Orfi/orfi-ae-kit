@@ -73,14 +73,36 @@ bring the orfi-ae-kit repo back in sync with the improved global command bodies.
 | Command (orfi-ae-kit) | `orfi-ae-kit-set-helper-files-root` |
 | Command (orfi-kit) | `orfi-kit-set-helper-files-root` |
 
-## The helper-files root contents
+## Layout under the root — the `orfi-kits/` subfolder
 
-Both kits resolve files relative to the configured root:
+The helper-files root is a **general bucket** (it may hold golden files, reports, creds, etc.,
+unrelated to the kits). The kit files therefore live in a **dedicated `orfi-kits/` subfolder**,
+not at the root. The pointer stores the **root** (e.g. `C:\repos\helper_files`); each command
+appends the subfolder. (Note: distinct from the dotted `.orfi-kits/` *pointer* folder in the
+working repo — same idea, different place.)
 
-- **orfi-ae-kit reads:** `relay/relay-to-executor.md`, `relay/relay-to-architect.md`,
-  `architect-orientation.md`, `executor-orientation.md`, `CLAUDE-SESSION-STATE.md`,
-  `ONBOARDING.md`
-- **orfi-kit reads:** `CLAUDE-SESSION-STATE.md`
+```
+<helper-files-root>\          ← the pointer stores this
+  orfi-kits\                  ← fixed kit-convention subfolder
+    architect-orientation.md
+    executor-orientation.md
+    CLAUDE-SESSION-STATE.md
+    COPILOT-SESSION-STATE.md
+    ONBOARDING.md
+    relay\
+      relay-to-executor.md
+      relay-to-architect.md
+```
+
+**Per-file convention:** each command body defines `<kit-root>` = `<helper-files-root>\orfi-kits`
+**once** at the top (after resolving the pointer), then references `<kit-root>\…` everywhere.
+
+- **orfi-ae-kit reads/writes:** `<kit-root>\relay\relay-to-executor.md`,
+  `<kit-root>\relay\relay-to-architect.md`, `<kit-root>\architect-orientation.md`,
+  `<kit-root>\executor-orientation.md`, `<kit-root>\CLAUDE-SESSION-STATE.md`,
+  `<kit-root>\ONBOARDING.md`
+- **orfi-kit reads/writes:** `<kit-root>\CLAUDE-SESSION-STATE.md`,
+  `<kit-root>\COPILOT-SESSION-STATE.md`
 
 ## The config routine (shared shape, both kits)
 
@@ -148,12 +170,66 @@ The pointer-read rule used by every consuming command:
 
 4. **Docs (`README.md`).** Document the config command and the per-repo pointer flow.
 
+## Cold-start bootstrap — init commands
+
+A freshly-configured root is just a path; the files inside it do not exist yet. Two tiers:
+
+- **Loop-generated** — `CLAUDE-SESSION-STATE.md` / `COPILOT-SESSION-STATE.md` (persist-state
+  writes them) and the relay files (relay-to-* write them). These self-heal.
+- **Must pre-exist** — the orientation files; the `orient-*` commands only *point* at them and
+  fail with a raw file-not-found if absent. So a bootstrap step is needed.
+
+### `orfi-kit-init`
+
+Run the config routine, then **create placeholders only if absent (never overwrite)** under
+the configured root:
+
+- `CLAUDE-SESSION-STATE.md`, `COPILOT-SESSION-STATE.md` — placeholder with guiding comment
+  headers (what to record: current phase, RELAY FILE STATE, decisions, blockers).
+- `ONBOARDING.md` — placeholder with guiding comment headers prompting for the
+  project-specific detail the agnostic orientation defers to it: stack, ADR location,
+  test/verification commands, security gate, terminology rules.
+
+### `orfi-ae-kit-init`
+
+A **superset** of `orfi-kit-init` (it builds on orfi-kit, which is its prerequisite — it does
+not re-implement the state/onboarding placeholder logic independently). In addition to the
+state + onboarding placeholders (created only if absent), it writes the two **orientation
+files if absent**:
+
+- `architect-orientation.md`, `executor-orientation.md` — **agnostic** content (below).
+
+### `orient-*` guard
+
+If the relevant orientation file is missing, `orient-architect` / `orient-executor` stop and
+advise the user to run `/orfi-ae-kit-init` first. They do not silently auto-create — init is
+the deliberate bootstrap.
+
+### Agnostic orientation content
+
+Strip everything project-specific (no Panviva, GSD terminology policy, security-gate tool
+tree, `/orfi-run-*` names, C# stack, specific verification tool names). Those belong in
+`ONBOARDING.md`, which the orientation redirects the agent to read. Keep only transferable
+mechanics:
+
+- **Architect orientation:** who you are (direct/review/decide, don't type code); two-session
+  model (Architect → Executor → its sub-agents); first actions (read state, then onboarding
+  if it exists, then any project rules/specs those files point to); relay protocol (4 commands
+  + round-trip + reconcile-if-stale); how to write a task (goal/scope/constraints/done-when);
+  how to review (demand real test numbers, verify claims, scope discipline, stability over
+  clean diff — "re-run the project's tests yourself to reconcile", no tool names); what you
+  don't do. **Plus the ADR step (Architect only):** read ADR files in full if they exist; if
+  none, skip — or ask the human for their path and note it should be recorded in onboarding.
+- **Executor orientation:** same generic shape **minus the ADR step** — who you are (implement,
+  don't decide architecture/scope/merge); two-session model + fix-your-seat-from-this-file;
+  first actions; relay protocol + reconcile-if-stale; how to work (generic rigor: tests-first,
+  scope discipline, no fabricated data, report real numbers, stop-and-relay on surprises);
+  what you don't do.
+
 ## Out of scope
 
-- Updating the user-authored orientation files (`architect-orientation.md`,
-  `executor-orientation.md`) inside the helper-files root, which themselves hard-code the
-  path internally. These are authored content, not shipped by either kit — the user edits
-  them once by hand.
+- Replacing the user's existing real orientation files in their current helper-files root —
+  init never overwrites an existing file.
 
 ## Non-goals
 

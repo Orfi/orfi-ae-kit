@@ -37,6 +37,7 @@ set-helper-files-root (one-time per repo — configure the helper-files root)
 | Command | Role |
 | --- | --- |
 | `/orfi-ae-kit-set-helper-files-root` | Setup: configure (create or change) the per-repo helper-files root. |
+| `/orfi-ae-kit-init` | Setup: bootstrap the kit files (orientation + onboarding + session-state placeholders) under the root — create-if-absent, never overwrites. |
 | `/orfi-ae-kit-orient-architect` | Orient this session as the Architect (reads orientation + session-state + onboarding). |
 | `/orfi-ae-kit-orient-executor` | Orient this session as the Executor (reads executor-orientation + session-state + onboarding). |
 | `/orfi-ae-kit-relay-to-executor` | Architect: write the next task to the executor relay file. |
@@ -44,7 +45,7 @@ set-helper-files-root (one-time per repo — configure the helper-files root)
 | `/orfi-ae-kit-relay-to-architect` | Executor: write your result/report back. |
 | `/orfi-ae-kit-relay-read-result` | Architect: read and critically review the Executor's result. |
 
-In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 7 Claude commands mirrored as 7 Copilot skills.
+In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 8 Claude commands mirrored as 8 Copilot skills.
 
 ## Install
 
@@ -100,7 +101,7 @@ Claude and OpenCode share the same **command** source; each gets its own copy in
 ./install.ps1 -Uninstall
 ```
 
-Removes the 7 commands from the Claude/OpenCode commands dirs and the 7 skill dirs from `~/.copilot/skills`, for whichever runtimes you select.
+Removes the 8 commands from the Claude/OpenCode commands dirs and the 8 skill dirs from `~/.copilot/skills`, for whichever runtimes you select.
 
 ## The helper-files root (per-repo, configurable)
 
@@ -115,15 +116,18 @@ The relay, orientation, onboarding, and session-state files all live under a sin
 
 `.orfi-kits/` is kept **untracked** by its own self-contained `.gitignore` — no edits to your repo's root `.gitignore`, no noise for people who don't use the kit. Any command that needs the root reads the pointer first; if it isn't set yet, the command configures it on the spot, then continues. There is **no fallback** to any previous default path.
 
-Under the configured root the kit expects (created/used as the loop runs):
+**Then bootstrap the kit files** — run `/orfi-ae-kit-init` once per repo. It creates the orientation, onboarding, and session-state files under the root **only if they don't already exist** (it never overwrites; if the repo is already initialized it says so and quits). The orientation files it writes are **generic/agnostic** — all project-specific rules (stack, conventions, ADR location, test commands, security gate, terminology) live in `ONBOARDING.md`, which the orientation files redirect agents to read.
+
+The helper-files root is a general bucket, so the kit keeps its files in a dedicated **`orfi-kits/` subfolder** under the root (the pointer stores the root; the commands append `orfi-kits/`):
 
 ```
-<root>\relay\relay-to-executor.md     (task: Architect → Executor)
-<root>\relay\relay-to-architect.md    (result: Executor → Architect)
-<root>\architect-orientation.md       (who the Architect is / how it operates)
-<root>\executor-orientation.md        (who the Executor is / how it operates)
-<root>\CLAUDE-SESSION-STATE.md        (shared handoff state)
-<root>\ONBOARDING.md                  (epic single source of truth, read if it exists)
+<root>\orfi-kits\relay\relay-to-executor.md     (task: Architect → Executor)
+<root>\orfi-kits\relay\relay-to-architect.md    (result: Executor → Architect)
+<root>\orfi-kits\architect-orientation.md       (generic: who the Architect is / how it operates)
+<root>\orfi-kits\executor-orientation.md        (generic: who the Executor is / how it operates)
+<root>\orfi-kits\CLAUDE-SESSION-STATE.md        (shared handoff state — Claude)
+<root>\orfi-kits\COPILOT-SESSION-STATE.md       (shared handoff state — Copilot)
+<root>\orfi-kits\ONBOARDING.md                  (project single source of truth, read if it exists)
 ```
 
 The same pointer is shared with **orfi-kit** (which reads `CLAUDE-SESSION-STATE.md` from it via its own `/orfi-kit-set-helper-files-root` command), so the Architect/Executor handoff and orfi-kit's state commands all agree on one root per repo.
