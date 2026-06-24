@@ -22,26 +22,29 @@ The two sessions never share a context window. They communicate **only through f
 ## The relay loop
 
 ```
-orient (Architect)
-  → relay-to-executor (Architect writes task)
-    → relay-read-task (Executor reads task)
-      → Executor does the work
-        → relay-to-architect (Executor writes result)
-          → relay-read-result (Architect reviews critically)
-            → repeat (Architect relays the next task)
+set-helper-files-root (one-time per repo — configure the helper-files root)
+  → orient (Architect / Executor each orient their own session)
+    → relay-to-executor (Architect writes task)
+      → relay-read-task (Executor reads task)
+        → Executor does the work
+          → relay-to-architect (Executor writes result)
+            → relay-read-result (Architect reviews critically)
+              → repeat (Architect relays the next task)
 ```
 
 ## Command reference
 
 | Command | Role |
 | --- | --- |
+| `/orfi-ae-kit-set-helper-files-root` | Setup: configure (create or change) the per-repo helper-files root. |
 | `/orfi-ae-kit-orient-architect` | Orient this session as the Architect (reads orientation + session-state + onboarding). |
+| `/orfi-ae-kit-orient-executor` | Orient this session as the Executor (reads executor-orientation + session-state + onboarding). |
 | `/orfi-ae-kit-relay-to-executor` | Architect: write the next task to the executor relay file. |
 | `/orfi-ae-kit-relay-read-task` | Executor: read the task the Architect left. |
 | `/orfi-ae-kit-relay-to-architect` | Executor: write your result/report back. |
 | `/orfi-ae-kit-relay-read-result` | Architect: read and critically review the Executor's result. |
 
-In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 5 Claude commands mirrored as 5 Copilot skills.
+In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 7 Claude commands mirrored as 7 Copilot skills.
 
 ## Install
 
@@ -97,23 +100,33 @@ Claude and OpenCode share the same **command** source; each gets its own copy in
 ./install.ps1 -Uninstall
 ```
 
-Removes the 5 commands from the Claude/OpenCode commands dirs and the 5 skill dirs from `~/.copilot/skills`, for whichever runtimes you select.
+Removes the 7 commands from the Claude/OpenCode commands dirs and the 7 skill dirs from `~/.copilot/skills`, for whichever runtimes you select.
 
-## Known environment assumption — hard-coded relay paths
+## The helper-files root (per-repo, configurable)
 
-The command/skill bodies reference one user's **real Windows relay setup** with absolute paths. These appear literally inside the files and are preserved as-is:
+The relay, orientation, onboarding, and session-state files all live under a single **helper-files root** directory. The commands no longer hard-code a path — instead each resolves the root from a small **per-repo pointer file**, so every repo keeps its own separate state and they never overwrite each other.
+
+**Configure it once per repo** — run `/orfi-ae-kit-set-helper-files-root` (pass the path, or it will prompt you). That writes:
 
 ```
-C:\repos\helper_files\relay\relay-to-executor.md     (task: Architect → Executor)
-C:\repos\helper_files\relay\relay-to-architect.md    (result: Executor → Architect)
-C:\repos\helper_files\architect-orientation.md       (who the Architect is / how it operates)
-C:\repos\helper_files\CLAUDE-SESSION-STATE.md         (shared handoff state)
-C:\repos\helper_files\ONBOARDING.md                   (epic single source of truth, read if it exists)
+.orfi-kits/helper-files-root   one line: the absolute path to your helper-files root
+.orfi-kits/.gitignore          a single "*" so the whole folder stays untracked
 ```
 
-These paths are environment-specific (one user's Windows machine).
+`.orfi-kits/` is kept **untracked** by its own self-contained `.gitignore` — no edits to your repo's root `.gitignore`, no noise for people who don't use the kit. Any command that needs the root reads the pointer first; if it isn't set yet, the command configures it on the spot, then continues. There is **no fallback** to any previous default path.
 
-> **TODO (known limitation):** make the relay root configurable (e.g. an env var / config value) rather than hard-coding it to `C:\repos\helper_files`. Documented here as a known limitation, not yet implemented.
+Under the configured root the kit expects (created/used as the loop runs):
+
+```
+<root>\relay\relay-to-executor.md     (task: Architect → Executor)
+<root>\relay\relay-to-architect.md    (result: Executor → Architect)
+<root>\architect-orientation.md       (who the Architect is / how it operates)
+<root>\executor-orientation.md        (who the Executor is / how it operates)
+<root>\CLAUDE-SESSION-STATE.md        (shared handoff state)
+<root>\ONBOARDING.md                  (epic single source of truth, read if it exists)
+```
+
+The same pointer is shared with **orfi-kit** (which reads `CLAUDE-SESSION-STATE.md` from it via its own `/orfi-kit-set-helper-files-root` command), so the Architect/Executor handoff and orfi-kit's state commands all agree on one root per repo.
 
 ## License
 

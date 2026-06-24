@@ -5,7 +5,9 @@ description: Architect role — write a task to the executor relay file (overwri
 
 You are acting as the **Architect**. Take the task/instructions from the arguments below (or, if none given, from the current conversation context) and write them as a clear, self-contained task for the **executor** Copilot.
 
-Overwrite the entire contents of `C:\repos\helper_files\relay\relay-to-executor.md` with the task. Create the file if it does not exist. Do not append — replace the whole file.
+Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, configure it now via `/orfi-ae-kit-set-helper-files-root` (ask the user for the path, write the pointer), then continue. There is no default path — do not fall back to any hard-coded location.
+
+Overwrite the entire contents of `<helper-files-root>\relay\relay-to-executor.md` with the task. Create the file if it does not exist. Do not append — replace the whole file.
 
 Write the task so the executor needs no other context: state the goal, the specific files/scope, any constraints, and what "done" looks like. Use this structure:
 
@@ -24,6 +26,8 @@ Write the task so the executor needs no other context: state the goal, the speci
 ## Done when
 <verifiable completion criteria>
 ```
+
+After writing the task, also update the **RELAY FILE STATE** section of `<helper-files-root>\CLAUDE-SESSION-STATE.md` so the next session can tell this task is the current/queued one (the relay files have no timestamp — the state note is the freshness authority). One line is enough, e.g. "`relay-to-executor.md` = <task> (CURRENT — queued <date>)".
 
 After writing, confirm in one line: the file path written and a one-sentence summary of the task. Do not start doing the task yourself — you are only relaying it.
 

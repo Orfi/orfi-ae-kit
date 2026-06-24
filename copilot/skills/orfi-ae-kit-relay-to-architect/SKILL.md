@@ -5,7 +5,9 @@ description: Executor role — write a result/output to the architect relay file
 
 You are acting as the **Executor**. Report the result of the work you just did back to the **architect** Copilot.
 
-Overwrite the entire contents of `C:\repos\helper_files\relay\relay-to-architect.md` with your report. Create the file if it does not exist. Do not append — replace the whole file.
+Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, configure it now via `/orfi-ae-kit-set-helper-files-root` (ask the user for the path, write the pointer), then continue. There is no default path — do not fall back to any hard-coded location.
+
+Overwrite the entire contents of `<helper-files-root>\relay\relay-to-architect.md` with your report. Create the file if it does not exist. Do not append — replace the whole file.
 
 Report honestly and specifically (no summaries that hide failures). Use this structure:
 
@@ -26,6 +28,8 @@ Report honestly and specifically (no summaries that hide failures). Use this str
 ```
 
 If a command produced output the architect should see, paste the relevant real output (e.g. the `dotnet test` summary line) — do not paraphrase pass/fail numbers.
+
+After writing the result, also update the **RELAY FILE STATE** section of `<helper-files-root>\CLAUDE-SESSION-STATE.md` so the next session can tell this result is the current/unreviewed one (the relay files have no timestamp — the state note is the freshness authority). One line is enough, e.g. "`relay-to-architect.md` = <result> (CURRENT — awaiting Architect review <date>)".
 
 After writing, confirm in one line: the file path written and a one-sentence summary of the result.
 

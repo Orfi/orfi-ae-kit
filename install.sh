@@ -34,9 +34,9 @@ CLAUDE_CMDS="$HOME/.claude/commands"
 OPENCODE_CMDS="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/commands"
 COPILOT_SKILLS="$HOME/.copilot/skills"          # Copilot's own home — no command file
 
-# Same 5 names for both the command .md files and the Copilot skill dirs.
-COMMANDS=(orfi-ae-kit-orient-architect orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
-SKILLS=(orfi-ae-kit-orient-architect orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
+# Same 7 names for both the command .md files and the Copilot skill dirs.
+COMMANDS=(orfi-ae-kit-set-helper-files-root orfi-ae-kit-orient-architect orfi-ae-kit-orient-executor orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
+SKILLS=(orfi-ae-kit-set-helper-files-root orfi-ae-kit-orient-architect orfi-ae-kit-orient-executor orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
 
 LINK=0
 MODE="install"

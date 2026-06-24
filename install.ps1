@@ -45,9 +45,9 @@ $ClaudeCmds    = Join-Path $Home_ '.claude/commands'
 $OpencodeCmds  = Join-Path $XdgConfig 'opencode/commands'
 $CopilotSkills = Join-Path $Home_ '.copilot/skills'         # Copilot's own home — no command file
 
-# Same 5 names for both the command .md files and the Copilot skill dirs.
-$Commands = @('orfi-ae-kit-orient-architect','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
-$Skills   = @('orfi-ae-kit-orient-architect','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
+# Same 7 names for both the command .md files and the Copilot skill dirs.
+$Commands = @('orfi-ae-kit-set-helper-files-root','orfi-ae-kit-orient-architect','orfi-ae-kit-orient-executor','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
+$Skills   = @('orfi-ae-kit-set-helper-files-root','orfi-ae-kit-orient-architect','orfi-ae-kit-orient-executor','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
 
 # --- helpers -----------------------------------------------------------------
 
