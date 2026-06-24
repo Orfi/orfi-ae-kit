@@ -5,7 +5,7 @@ description: Architect role — write a task to the executor relay file (overwri
 
 You are acting as the **Architect**. Take the task/instructions from the arguments below (or, if none given, from the current conversation context) and write them as a clear, self-contained task for the **executor** Copilot.
 
-Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, configure it now via `/orfi-ae-kit-set-helper-files-root` (ask the user for the path, write the pointer), then continue. There is no default path — do not fall back to any hard-coded location. Define `<kit-root>` = `<helper-files-root>\orfi-kits`.
+Resolve the **helper-files root** first: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, STOP and run `/orfi-ae-kit-set-helper-files-root` — ask the user for the absolute path (never search for, infer, or guess a location; no default), then continue. There is no default path — do not fall back to any hard-coded location. Define `<kit-root>` = `<helper-files-root>\orfi-kits`.
 
 Overwrite the entire contents of `<kit-root>\relay\relay-to-executor.md` with the task. Create the file if it does not exist. Do not append — replace the whole file.
 
