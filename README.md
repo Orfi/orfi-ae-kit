@@ -19,6 +19,17 @@ You run **two context-isolated AI sessions** against one piece of work:
 
 The two sessions never share a context window. They communicate **only through file-based relay files** on disk. A **human sits at the decision points** — approving tasks, resolving blockers, and steering the loop.
 
+## Why two sessions, not one session with a sub-agent?
+
+A single AI session can spawn sub-agents, but that is not the same as two truly separate sessions. The distinction matters:
+
+- **Context isolation** — each session has its own context window. Architect and Executor work independently; neither accumulates the other's file reads, test output, or diff noise. A single session doing both roles burns context rapidly and degrades quality as the window fills.
+- **Independent verification** — the Architect's job is to critically review what the Executor produces. If both roles run in the same context window the "review" is just the model reading its own prior output. Separate sessions produce a genuinely independent second read.
+- **Concurrent execution** — the Executor can be running tests or building while the Architect is reviewing a previous result, updating state files, or drafting the next task. Sub-agents launched from one session block or compete; separate terminals run in parallel.
+- **Explicit, auditable handoff** — relay files on disk are the only channel. Every task brief and every result is a written artefact the human can read, approve, or redirect before the loop continues. Sub-agent calls are invisible to the human unless they happen to watch the transcript.
+- **Human stays in the loop** — because the human physically switches terminals and sends the relay, every cycle has a natural checkpoint. Nothing proceeds without a conscious act. A sub-agent loop can run to completion without the human ever seeing an intermediate result.
+- **Model flexibility** — each session can run a different model tier. The Architect can use a reasoning-heavy model for design decisions while the Executor uses a faster model for implementation. Sub-agents launched from one session are constrained by whatever that session supports.
+
 ## The relay loop
 
 ```
