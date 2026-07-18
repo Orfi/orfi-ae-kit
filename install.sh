@@ -34,9 +34,11 @@ CLAUDE_CMDS="$HOME/.claude/commands"
 OPENCODE_CMDS="${XDG_CONFIG_HOME:-$HOME/.config}/opencode/commands"
 COPILOT_SKILLS="$HOME/.copilot/skills"          # Copilot's own home — no command file
 
-# Same 8 names for both the command .md files and the Copilot skill dirs.
+# Base artifacts — always installed. Same 8 names for command .md files and Copilot skill dirs.
 COMMANDS=(orfi-ae-kit-set-helper-files-root orfi-ae-kit-init orfi-ae-kit-orient-architect orfi-ae-kit-orient-executor orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
-SKILLS=(orfi-ae-kit-set-helper-files-root orfi-ae-kit-init orfi-ae-kit-orient-architect orfi-ae-kit-orient-executor orfi-ae-kit-relay-to-executor orfi-ae-kit-relay-read-task orfi-ae-kit-relay-to-architect orfi-ae-kit-relay-read-result)
+SKILLS=("${COMMANDS[@]}")
+# Herdr-gated artifacts — installed only with Herdr support; ALWAYS removed on uninstall.
+PINGPONG=(orfi-ae-kit-pingpong orfi-ae-kit-pingpong-stop)
 
 LINK=0
 MODE="install"
@@ -75,7 +77,7 @@ install_commands_to() {
 
 remove_commands_from() {
   local target_dir="$1"
-  for c in "${COMMANDS[@]}"; do
+  for c in "${COMMANDS[@]}" "${PINGPONG[@]}"; do
     if [ -e "$target_dir/$c.md" ] || [ -L "$target_dir/$c.md" ]; then
       rm -rf "$target_dir/$c.md"
       say "  removed $target_dir/$c.md"
@@ -92,7 +94,7 @@ install_skills_to() {
 
 remove_skills_from() {
   local target_dir="$1"
-  for s in "${SKILLS[@]}"; do
+  for s in "${SKILLS[@]}" "${PINGPONG[@]}"; do
     if [ -e "$target_dir/$s" ] || [ -L "$target_dir/$s" ]; then
       rm -rf "$target_dir/$s"
       say "  removed $target_dir/$s"
@@ -147,6 +149,42 @@ for n in ${choice//,/ }; do
 done
 
 [ "$WANT_CC" -eq 1 ] || [ "$WANT_OC" -eq 1 ] || [ "$WANT_CP" -eq 1 ] || err "no runtime selected"
+
+# --- herdr support (install mode only) ----------------------------------------
+
+WANT_HERDR=0
+if [ "$MODE" = "install" ]; then
+  printf 'Do you want Herdr support (autonomous architect<->executor ping-pong)? [y/N]: '
+  read -r herdr_choice
+  case "$herdr_choice" in
+    y|Y|yes|YES)
+      WANT_HERDR=1
+      if command -v herdr >/dev/null 2>&1; then
+        printf 'herdr is already installed. Update it now? [y/N]: '
+        read -r upd
+        case "$upd" in y|Y|yes|YES) curl -fsSL https://herdr.dev/install.sh | sh ;; esac
+      else
+        say "Installing herdr..."
+        curl -fsSL https://herdr.dev/install.sh | sh
+      fi
+      if command -v npx >/dev/null 2>&1; then
+        say "Installing the herdr agent skill globally..."
+        npx skills add ogulcancelik/herdr --skill herdr -g
+      else
+        warn "npx not found — install the herdr agent skill manually:"
+        say  "  https://github.com/ogulcancelik/herdr/blob/master/SKILL.md"
+      fi
+      ;;
+    *)
+      say "Skipping Herdr support — regular (manual relay) mode only."
+      ;;
+  esac
+fi
+
+if [ "$WANT_HERDR" -eq 1 ]; then
+  COMMANDS+=("${PINGPONG[@]}")
+  SKILLS+=("${PINGPONG[@]}")
+fi
 
 # --- uninstall ---------------------------------------------------------------
 
