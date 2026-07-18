@@ -45,9 +45,11 @@ $ClaudeCmds    = Join-Path $Home_ '.claude/commands'
 $OpencodeCmds  = Join-Path $XdgConfig 'opencode/commands'
 $CopilotSkills = Join-Path $Home_ '.copilot/skills'         # Copilot's own home — no command file
 
-# Same 8 names for both the command .md files and the Copilot skill dirs.
+# Base artifacts — always installed.
 $Commands = @('orfi-ae-kit-set-helper-files-root','orfi-ae-kit-init','orfi-ae-kit-orient-architect','orfi-ae-kit-orient-executor','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
-$Skills   = @('orfi-ae-kit-set-helper-files-root','orfi-ae-kit-init','orfi-ae-kit-orient-architect','orfi-ae-kit-orient-executor','orfi-ae-kit-relay-to-executor','orfi-ae-kit-relay-read-task','orfi-ae-kit-relay-to-architect','orfi-ae-kit-relay-read-result')
+$Skills   = $Commands
+# Herdr-gated artifacts — installed only with Herdr support; ALWAYS removed on uninstall.
+$PingPong = @('orfi-ae-kit-pingpong','orfi-ae-kit-pingpong-stop')
 
 # --- helpers -----------------------------------------------------------------
 
@@ -80,7 +82,7 @@ function Install-CommandsTo($targetDir) {
 }
 
 function Remove-CommandsFrom($targetDir) {
-    foreach ($c in $Commands) {
+    foreach ($c in ($Commands + $PingPong)) {
         $p = Join-Path $targetDir "$c.md"
         if (Test-Path $p) { Remove-Item -Recurse -Force $p; Say "  removed $p" }
     }
@@ -91,7 +93,7 @@ function Install-SkillsTo($targetDir) {
 }
 
 function Remove-SkillsFrom($targetDir) {
-    foreach ($s in $Skills) {
+    foreach ($s in ($Skills + $PingPong)) {
         $p = Join-Path $targetDir $s
         if (Test-Path $p) { Remove-Item -Recurse -Force $p; Say "  removed $p" }
     }
@@ -133,6 +135,38 @@ foreach ($n in ($choice -split '[,\s]+' | Where-Object { $_ -ne '' })) {
 }
 
 if (-not ($WantCC -or $WantOC -or $WantCP)) { Die 'no runtime selected' }
+
+# --- herdr support (install mode only) ----------------------------------------
+
+$WantHerdr = $false
+if (-not $Uninstall) {
+    $herdrChoice = Read-Host 'Do you want Herdr support (autonomous architect<->executor ping-pong)? [y/N]'
+    if ($herdrChoice -match '^(y|yes)$') {
+        $WantHerdr = $true
+        if (Get-Command herdr -ErrorAction SilentlyContinue) {
+            $upd = Read-Host 'herdr is already installed. Update it now? [y/N]'
+            if ($upd -match '^(y|yes)$') {
+                powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"
+            }
+        } else {
+            Say 'Installing herdr...'
+            powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"
+        }
+        if (Get-Command npx -ErrorAction SilentlyContinue) {
+            Say 'Installing the herdr agent skill globally...'
+            npx skills add ogulcancelik/herdr --skill herdr -g
+        } else {
+            Warn 'npx not found - install the herdr agent skill manually:'
+            Say  '  https://github.com/ogulcancelik/herdr/blob/master/SKILL.md'
+        }
+    } else {
+        Say 'Skipping Herdr support - regular (manual relay) mode only.'
+    }
+}
+if ($WantHerdr) {
+    $Commands = $Commands + $PingPong
+    $Skills   = $Skills + $PingPong
+}
 
 # --- uninstall ---------------------------------------------------------------
 
