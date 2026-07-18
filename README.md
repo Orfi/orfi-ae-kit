@@ -58,7 +58,29 @@ set-helper-files-root (one-time per repo — configure the helper-files root)
 | `/orfi-ae-kit-pingpong` | Architect: autonomous relay loop via Herdr — relay, nudge, wait, read, repeat until DONE. *(Installed only with Herdr support.)* |
 | `/orfi-ae-kit-pingpong-stop` | Any pane: stop a running ping-pong loop at its next checkpoint. *(Installed only with Herdr support.)* |
 
-In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 8 Claude commands mirrored as 8 Copilot skills.
+In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: every Claude command is mirrored as a Copilot skill — 8 core, plus 2 optional ping-pong commands installed only with Herdr support.
+
+## Getting started
+
+1. **Install** the kit for your runtime(s) — see [Install](#install) below.
+2. **Open two terminals**, each running its own AI CLI session in the same repo — one will be the Architect, one the Executor. (Different models/CLIs are fine; that's a feature.)
+3. **One-time per repo:** in either session, run `/orfi-ae-kit-set-helper-files-root` (point it at your helper-files directory), then `/orfi-ae-kit-init` to bootstrap the orientation, onboarding, and session-state files.
+4. **Orient the sessions:** run `/orfi-ae-kit-orient-architect` in one terminal and `/orfi-ae-kit-orient-executor` in the other.
+5. **Run the loop:**
+   - In the Architect: `/orfi-ae-kit-relay-to-executor` — describe the task; it writes the relay file.
+   - Switch to the Executor: `/orfi-ae-kit-relay-read-task` — it reads the task and does the work, then `/orfi-ae-kit-relay-to-architect` to write its report.
+   - Back in the Architect: `/orfi-ae-kit-relay-read-result` — it critically reviews the result and drafts the next task.
+   - Repeat. You are the relay — every hop passes through your hands.
+
+### Optional: Herdr and ping-pong mode
+
+If you opted into **Herdr support** at install time and both sessions run inside [Herdr](https://herdr.dev) panes labeled `architect` and `executor`, two extras become available:
+
+- **Nudging (no new command needed):** instead of switching terminals yourself, tell the Architect in plain language — *"relay this and nudge the executor"* — and it delivers the read command into the Executor's pane via Herdr. Still one hop; control returns to you.
+- **`/orfi-ae-kit-pingpong`:** run in the Architect's pane to let the two sessions iterate autonomously — relay → nudge → wait → review → repeat — until the Executor reports `## Status: DONE`, an agent blocks, a wait times out, or you stop it. The relay files remain the only data channel, so every hop stays on disk and auditable.
+- **`/orfi-ae-kit-pingpong-stop`:** run from **any** pane to halt the loop at its next checkpoint (it drops a STOP sentinel the Architect checks before every hop). For an immediate abort, press Esc/Ctrl+C in the Architect's pane.
+
+Without Herdr, none of this exists — the kit works exactly as described above, with you carrying every hop.
 
 ## Install
 
@@ -122,7 +144,7 @@ Claude and OpenCode share the same **command** source; each gets its own copy in
 ./install.ps1 -Uninstall
 ```
 
-Removes the 8 commands from the Claude/OpenCode commands dirs and the 8 skill dirs from `~/.copilot/skills`, for whichever runtimes you select.
+Removes the commands from the Claude/OpenCode commands dirs and the skill dirs from `~/.copilot/skills`, for whichever runtimes you select — including the two ping-pong commands if present (Herdr itself is never touched).
 
 ## The helper-files root (per-repo, configurable)
 
