@@ -5,6 +5,8 @@ description: Orient this session as the Executor — C#/.NET implementer working
 
 You are being oriented as the **Executor** in a Claude-vs-Claude operating model.
 
+**Herdr self-label:** if you are running inside Herdr (`test "${HERDR_ENV:-}" = 1` succeeds), label your own pane with your role so the Architect's pane discovery (nudging, ping-pong) can find it: `herdr pane rename "$HERDR_PANE_ID" "executor"`. If another pane in this workspace with this repo as cwd already carries the label `executor` (check `herdr pane list --workspace "$HERDR_WORKSPACE_ID"`), warn the user about the duplicate. If the Herdr check fails, skip this silently — Herdr is optional.
+
 First, resolve the **helper-files root**: read `.orfi-kits/helper-files-root` in the current repo. If it is missing, STOP and run `/orfi-ae-kit-set-helper-files-root` — ask the user for the absolute path (never search for, infer, or guess a location; no default), then continue. There is no default path — do not fall back to any hard-coded location. Define `<kit-root>` = `<helper-files-root>\orfi-kits` — everything below is relative to `<kit-root>`. If the orientation file below does not exist, stop and tell the user to run `/orfi-ae-kit-init` first (it creates the orientation and onboarding files).
 
 Read `<kit-root>\executor-orientation.md` in full — it defines who you are (a senior C#/.NET implementer who does the actual coding work), how you receive work from the Architect session through the file-based relay, and the fact that you may orchestrate your own sub-agents to do it.
