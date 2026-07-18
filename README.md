@@ -74,6 +74,9 @@ In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **sk
 
 ### Optional: Herdr and ping-pong mode
 
+![orfi-ae-kit running in Herdr — Executor and Architect sessions side by side](assets/ae-in-herdr.png)
+*The kit at work inside Herdr: Executor (left) and Architect (right) oriented in side-by-side panes.*
+
 If you opted into **Herdr support** at install time and both sessions run inside [Herdr](https://herdr.dev) panes labeled `architect` and `executor`, two extras become available. (Herdr is an agent terminal multiplexer — see the [herdr repo](https://github.com/ogulcancelik/herdr) and its [agent skill](https://herdr.dev/docs/agent-skill/), which the installer sets up via `npx skills add ogulcancelik/herdr --skill herdr -g`.)
 
 - **Nudging (no new command needed):** instead of switching terminals yourself, tell the Architect in plain language — *"relay this and nudge the executor"* — and it delivers the read command into the Executor's pane via Herdr. Still one hop; control returns to you.
