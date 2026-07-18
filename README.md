@@ -55,6 +55,8 @@ set-helper-files-root (one-time per repo — configure the helper-files root)
 | `/orfi-ae-kit-relay-read-task` | Executor: read the task the Architect left. |
 | `/orfi-ae-kit-relay-to-architect` | Executor: write your result/report back. |
 | `/orfi-ae-kit-relay-read-result` | Architect: read and critically review the Executor's result. |
+| `/orfi-ae-kit-pingpong` | Architect: autonomous relay loop via Herdr — relay, nudge, wait, read, repeat until DONE. *(Installed only with Herdr support.)* |
+| `/orfi-ae-kit-pingpong-stop` | Any pane: stop a running ping-pong loop at its next checkpoint. *(Installed only with Herdr support.)* |
 
 In Claude Code these are **commands**; in GitHub Copilot CLI the equivalent **skills** are their own slash commands. Full parity: 8 Claude commands mirrored as 8 Copilot skills.
 
@@ -83,6 +85,14 @@ Select one or more (e.g. '1', '3', or '1 2 3' / '1,2' for several).
 ```
 
 Selections may be **space- or comma-separated** (`1`, `1 2`, `1,3`, `1 2 3`).
+
+The installer then asks whether you want **Herdr support** (autonomous
+architect↔executor ping-pong). Answering yes installs/updates
+[Herdr](https://herdr.dev), installs its agent skill
+(`npx skills add ogulcancelik/herdr --skill herdr -g`), and includes the two
+ping-pong commands. Answering no installs the kit exactly as before — manual
+relay mode only. Uninstall always removes the ping-pong commands if present,
+but never touches Herdr itself.
 
 ### Flags
 

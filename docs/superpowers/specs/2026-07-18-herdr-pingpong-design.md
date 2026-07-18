@@ -26,8 +26,7 @@ up the relay files, the user's control, or independence from Herdr.
 
 ## What is added
 
-Two new skills (in both `claude/skills/` and `copilot/skills/`, per the kit's
-dual-variant convention). A manual one-hop "nudge" needs **no** skill — the user
+Two new skills (in both `claude/commands/` (Claude Code + OpenCode) and `copilot/skills/` (Copilot CLI), per the kit's source layout). A manual one-hop "nudge" needs **no** skill — the user
 just tells the architect in plain language, e.g. *"run
 `/orfi-ae-kit-relay-read-task` in the executor's pane via herdr"*.
 
