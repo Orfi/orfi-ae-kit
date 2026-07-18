@@ -105,6 +105,33 @@ immediate abort, as with any agent.
 - `pane run` prompt delivery and reply round-trip: **works** (6 s ping→pong).
 - Chained `working`→`idle` waits **race on fast replies** — hence step 3e.
 
+## Installer changes (install.sh and install.ps1)
+
+The two ping-pong skills are **conditional artifacts**: they are installed only
+when the user opts into Herdr support. Both installers gain the same
+interactive step:
+
+1. **Ask:** "Do you want Herdr support (autonomous architect↔executor
+   ping-pong)? [y/N]"
+2. **If yes:**
+   - `herdr` not on `PATH` → install it:
+     - Linux/macOS: `curl -fsSL https://herdr.dev/install.sh | sh`
+     - Windows: `powershell -ExecutionPolicy Bypass -c "irm https://herdr.dev/install.ps1 | iex"`
+   - `herdr` already on `PATH` → offer to update it by re-running the same
+     official installer (skip if declined).
+   - Install the herdr agent skill globally:
+     `npx skills add ogulcancelik/herdr --skill herdr -g`
+     (requires Node/npx; if missing, warn and point at the manual fallback,
+     https://github.com/ogulcancelik/herdr/blob/master/SKILL.md).
+   - Add `orfi-ae-kit-pingpong` and `orfi-ae-kit-pingpong-stop` to the
+     command/skill sets installed for every selected runtime.
+3. **If no:** skip the two ping-pong skills entirely — the kit installs exactly
+   as today, regular (manual relay) mode only.
+
+`--uninstall` always removes the two ping-pong skills if present, but never
+uninstalls Herdr itself or the herdr agent skill — those are user-level tools
+outside the kit's ownership.
+
 ## Out of scope
 
 - No changes to the relay file format or the four relay skills.
