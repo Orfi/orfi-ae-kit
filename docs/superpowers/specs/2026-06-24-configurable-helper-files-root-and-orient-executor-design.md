@@ -207,7 +207,7 @@ the deliberate bootstrap.
 
 ### Agnostic orientation content
 
-Strip everything project-specific (no Panviva, GSD terminology policy, security-gate tool
+Strip everything project-specific (no company/product branding, GSD terminology policy, security-gate tool
 tree, `/orfi-run-*` names, C# stack, specific verification tool names). Those belong in
 `ONBOARDING.md`, which the orientation redirects the agent to read. Keep only transferable
 mechanics:

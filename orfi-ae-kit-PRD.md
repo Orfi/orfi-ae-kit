@@ -41,7 +41,7 @@ All source files currently live in:
 | Claude Code (commands) | `claude-tools/commands/` |
 | Copilot (skills) | `copilot-tools/skills/` |
 
-> **Note:** those source directories also contain many *other* files (`orfi-kit-*`, `orfi-gsd-*`, `panviva-*`, etc.). **Copy ONLY the `orfi-ae-kit-*` items listed in the manifest below — nothing else.**
+> **Note:** those source directories also contain many *other* files (`orfi-kit-*`, `orfi-gsd-*`, and other unrelated items). **Copy ONLY the `orfi-ae-kit-*` items listed in the manifest below — nothing else.**
 
 A **clean-slate copy is fine.** Git history need **NOT** be preserved — just copy the files into the new repo layout and `git init` fresh.
 
